@@ -75,10 +75,11 @@ import _ from "lodash";
 import { mapGetters, mapActions, mapMutations } from "vuex";
 
 import ReportDataTable from "@/components/DeadCodeReport/ReportDataTable";
+import ReportErrorTable from "@/components/DeadCodeReport/ReportErrorTable";
 
 export default {
   name: "DeadCodeReport",
-  components: { ReportDataTable },
+  components: { ReportDataTable, ReportErrorTable },
   data() {
     return {
       isLoading: false,
@@ -89,6 +90,7 @@ export default {
           statsKey: "errors",
           color: "red",
           icon: "mdi-alert",
+          component: ReportErrorTable,
         },
         {
           name: _.startCase("isolates"),
