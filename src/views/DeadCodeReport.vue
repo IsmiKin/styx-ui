@@ -45,7 +45,7 @@
                 :reportRecords="deadCodeReport.report[section.key]"
               />
             </div>
-            <div v-else>I'm simple</div>
+            <div v-else>Section not implemented</div>
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -76,10 +76,11 @@ import { mapGetters, mapActions, mapMutations } from "vuex";
 
 import ReportDataTable from "@/components/DeadCodeReport/ReportDataTable";
 import ReportErrorTable from "@/components/DeadCodeReport/ReportErrorTable";
+import ReportIsolatesTable from "@/components/DeadCodeReport/ReportIsolatesTable";
 
 export default {
   name: "DeadCodeReport",
-  components: { ReportDataTable, ReportErrorTable },
+  components: { ReportDataTable, ReportErrorTable, ReportIsolatesTable },
   data() {
     return {
       isLoading: false,
@@ -98,6 +99,7 @@ export default {
           statsKey: "isolates",
           color: "warning",
           icon: "mdi-grain",
+          component: ReportIsolatesTable,
         },
         {
           name: _.startCase("report"),
