@@ -2,15 +2,10 @@
   <v-app id="inspire">
     <v-navigation-drawer v-model="drawer" app clipped>
       <v-list dense>
-        <v-list-item
-          v-for="item in items"
-          :key="item.text"
-          :to="item.link"
-          :disabled="item.disabled"
-          link
-        >
+        <v-list-item v-for="item in items" :key="item.text" :to="item.link" link>
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
+            <v-badge v-if="item.exists" color="green" dot />
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>{{ item.text }}</v-list-item-title>
@@ -68,17 +63,16 @@ export default {
 
     items() {
       return [
-        { icon: "mdi-send", text: "Run analysis", link: "run-report" },
         {
-          icon: "mdi-timeline",
+          icon: "mdi-skull-crossbones",
           text: "Dead code report",
-          disabled: !this.existsDeadCodeReport,
+          exists: this.existsDeadCodeReport,
           link: "dead-code-report",
         },
         {
           icon: "mdi-translate",
           text: "Translations report",
-          disabled: !this.existsTranslationsCodeReport,
+          exists: this.existsTranslationsCodeReport,
         },
         { icon: "mdi-history", text: "History" },
       ];
