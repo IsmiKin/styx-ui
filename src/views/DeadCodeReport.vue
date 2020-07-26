@@ -25,16 +25,32 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-      <v-expansion-panels>
+      <v-skeleton-loader
+        v-for="(index) in skeletonItemsVisible"
+        :key="index"
+        min-width="1161"
+        min-height="80"
+        type="list-item-two-line"
+        :loading="isLoading"
+      ></v-skeleton-loader>
+      <v-expansion-panels v-if="!isLoading">
         <v-expansion-panel v-for="section in tableSections" :key="`section-${section.key}`">
           <v-expansion-panel-header>
             <div class="justify-start">
               <v-icon class="mx-4" large>{{ section.icon }}</v-icon>
               <strong>{{ section.name }}</strong>
-              <v-chip
-                class="ma-2"
-                :color="section.color"
-              >{{ deadCodeReport.report.stats[section.statsKey] }}</v-chip>
+              <v-tooltip v-if="section.tooltipInfo" bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon v-bind="attrs" v-on="on" class="px-2">mdi-help-circle-outline</v-icon>
+                </template>
+                <span>{{ section.tooltipInfo }}</span>
+              </v-tooltip>
+
+              <v-chip class="ma-2" :color="section.color">
+                {{
+                deadCodeReport.report.stats[section.statsKey]
+                }}
+              </v-chip>
             </div>
           </v-expansion-panel-header>
           <v-expansion-panel-content>
@@ -58,10 +74,43 @@
       <v-divider></v-divider>
       <section>
         <v-form ref="dead-code-report-form">
-          <v-text-field v-model="deadCodeReport.projectPath" label="Project Path" required />
-          <v-text-field v-model="deadCodeReport.packageJson" label="Package json" required />
-          <v-text-field v-model="deadCodeReport.projectOptions" label="Project Options" required />
-          <v-btn color="success" :loading="isLoading" class="mr-4" @click="runReport">
+          <v-text-field
+            v-model="deadCodeReport.projectPath"
+            prepend-icon="mdi-folder"
+            label="Project Path"
+            hint="/home/myuser/project/project_name"
+            class="my-4"
+            persistent-hint
+            required
+          >
+            <template v-slot:append>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon v-on="on">mdi-help-circle-outline</v-icon>
+                </template>
+                Project where the scanner would run the report. It would search files matching criteria and resolve imports.
+              </v-tooltip>
+            </template>
+          </v-text-field>
+          <v-text-field
+            v-model="deadCodeReport.packageJson"
+            prepend-icon="mdi-package-variant-closed"
+            label="Package json"
+            hint="/home/myuser/project/project_name/package.json"
+            class="my-4"
+            persistent-hint
+            required
+          />
+          <v-text-field
+            v-model="deadCodeReport.projectOptions"
+            prepend-icon="mdi-format-list-checks"
+            label="Project Options"
+            hint="/home/myuser/project/project_name/project-options.json"
+            class="my-4"
+            persistent-hint
+            required
+          />
+          <v-btn color="success" :loading="isLoading" class="mt-4 mr-4" @click="runReport">
             <v-icon>mdi-play</v-icon>Run
           </v-btn>
         </v-form>
@@ -92,6 +141,8 @@ export default {
           color: "red",
           icon: "mdi-alert",
           component: ReportErrorTable,
+          tooltipInfo:
+            "Errors ocurring when scanning the imports from in a file. Mainly issues trying resolving the import path",
         },
         {
           name: _.startCase("isolates"),
@@ -100,6 +151,7 @@ export default {
           color: "warning",
           icon: "mdi-grain",
           component: ReportIsolatesTable,
+          tooltipInfo: "Files which has not being imported for any other file.",
         },
         {
           name: _.startCase("report"),
@@ -108,6 +160,7 @@ export default {
           color: "primary",
           icon: "mdi-transit-connection",
           component: ReportDataTable,
+          tooltipInfo: "All files has been scanned on the project path.",
         },
       ],
     };
@@ -117,6 +170,9 @@ export default {
       "existsDeadCodeReport",
       "deadCodeReport",
     ]),
+    skeletonItemsVisible() {
+      return this.isLoading ? _.size(this.tableSections) : [];
+    },
   },
   methods: {
     ...mapMutations("projectReportsStore", {

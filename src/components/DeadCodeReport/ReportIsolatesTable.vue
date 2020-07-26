@@ -37,7 +37,7 @@ export default {
       type: String,
     },
     reportRecords: {
-      type: Object,
+      type: Array,
       default: () => {},
     },
   },

@@ -16,7 +16,6 @@ export default {
   name: "FileFormatIcon",
   props: {
     icon: {
-      type: String,
       default: "image-broken",
     },
   },
