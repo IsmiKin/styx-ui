@@ -6,9 +6,11 @@ import {
 
 
 const DEAD_CODE_REPORT_INITIAL_STATE = {
-  projectPath: "",
-  packageJson: "",
-  projectOptions: "",
+  form: {
+    projectPath: "",
+    packageJson: "",
+    projectOptions: "",
+  },
   report: undefined,
 };
 
@@ -37,6 +39,9 @@ export default {
     deadCodeReport(state) {
       return _.get(state, 'deadCodeReport');
     },
+    deadCodeReportForm(state) {
+      return _.get(state, 'deadCodeReport.form');
+    }
   },
   mutations: {
     UPDATE_PACKAGE_JSON(state, packageJson) {
@@ -65,7 +70,7 @@ export default {
   },
   actions: {
     async generateDeadCodeReport(context) {
-      const deadReportPayload = _.pick(context.state.deadCodeReport, ['projectPath', 'packageJson', 'projectOptions']);
+      const deadReportPayload = _.get(context, 'state.deadCodeReport.form');
       const {
         data
       } = await runDeadCodeReport(deadReportPayload);

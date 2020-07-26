@@ -11,7 +11,7 @@
             <v-list-item-subtitle>
               <v-icon class="pr-4">mdi-folder</v-icon>
               <strong>Project path:</strong>
-              {{ deadCodeReport.projectPath }}
+              {{ deadCodeReportForm.projectPath }}
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -75,41 +75,25 @@
       <section>
         <v-form ref="dead-code-report-form">
           <v-text-field
-            v-model="deadCodeReport.projectPath"
-            prepend-icon="mdi-folder"
-            label="Project Path"
-            hint="/home/myuser/project/project_name"
+            v-for="input in reportFormInputs"
+            v-model="deadCodeReportForm[input.key]"
             class="my-4"
             persistent-hint
             required
+            :key="input.key"
+            :prepend-icon="input.icon"
+            :label="input.label"
+            :hint="input.hint"
           >
             <template v-slot:append>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-icon v-on="on">mdi-help-circle-outline</v-icon>
                 </template>
-                Project where the scanner would run the report. It would search files matching criteria and resolve imports.
+                {{ input.hint }}
               </v-tooltip>
             </template>
           </v-text-field>
-          <v-text-field
-            v-model="deadCodeReport.packageJson"
-            prepend-icon="mdi-package-variant-closed"
-            label="Package json"
-            hint="/home/myuser/project/project_name/package.json"
-            class="my-4"
-            persistent-hint
-            required
-          />
-          <v-text-field
-            v-model="deadCodeReport.projectOptions"
-            prepend-icon="mdi-format-list-checks"
-            label="Project Options"
-            hint="/home/myuser/project/project_name/project-options.json"
-            class="my-4"
-            persistent-hint
-            required
-          />
           <v-btn color="success" :loading="isLoading" class="mt-4 mr-4" @click="runReport">
             <v-icon>mdi-play</v-icon>Run
           </v-btn>
@@ -133,6 +117,29 @@ export default {
   data() {
     return {
       isLoading: false,
+      reportFormInputs: [
+        {
+          key: "projectPath",
+          label: "Project Path",
+          icon: "mdi-folder",
+          hint:
+            "Project where the scanner would run the report. It would search files matching criteria and resolve imports.",
+        },
+        {
+          key: "packageJson",
+          label: "Package json",
+          icon: "mdi-package-variant-closed",
+          hint:
+            "Project package.json path. It would be use to ignore vendor packages on the imports statements.",
+        },
+        {
+          key: "projectOptions",
+          label: "Project Options",
+          icon: "mdi-format-list-checks",
+          hint:
+            "Project options path. Specific options for the scanner (formats, ignores...) MORE INFO COMING.",
+        },
+      ],
       tableSections: [
         {
           name: _.startCase("errors"),
@@ -169,6 +176,7 @@ export default {
     ...mapGetters("projectReportsStore", [
       "existsDeadCodeReport",
       "deadCodeReport",
+      "deadCodeReportForm",
     ]),
     skeletonItemsVisible() {
       return this.isLoading ? _.size(this.tableSections) : [];
