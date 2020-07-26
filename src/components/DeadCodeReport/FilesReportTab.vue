@@ -34,7 +34,7 @@
     <v-skeleton-loader
       v-for="(index) in skeletonItemsVisible"
       :key="index"
-      min-width="1161"
+      min-width="1057"
       min-height="80"
       type="list-item-two-line"
       :loading="isLoading"
