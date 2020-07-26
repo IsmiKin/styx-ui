@@ -1,30 +1,7 @@
 <template>
   <div class="DeadCodeReport">
     <div v-if="existsDeadCodeReport">
-      <v-card class="mx-auto mb-8" outlined>
-        <v-list-item three-line>
-          <v-list-item-content>
-            <div class="overline mb-4">
-              <v-icon class="pr-4">mdi-skull-crossbones</v-icon>DEAD CODE REPORT
-            </div>
-
-            <v-list-item-subtitle>
-              <v-icon class="pr-4">mdi-folder</v-icon>
-              <strong>Project path:</strong>
-              {{ deadCodeReportForm.projectPath }}
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-card-actions>
-          <v-btn color="success" :loading="isLoading" class="ml-2" @click="runReport">
-            <v-icon>mdi-refresh</v-icon>Re-run
-          </v-btn>
-          <v-btn color="red" class="ml-2" @click="resetDeadCodeReportData">
-            <v-icon>mdi-broom</v-icon>New Report
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+      <HeaderSummary :isLoading="isLoading" @toggle-loading="toggleLoading" />
       <v-skeleton-loader
         v-for="(index) in skeletonItemsVisible"
         :key="index"
@@ -37,18 +14,17 @@
         <v-expansion-panel v-for="section in tableSections" :key="`section-${section.key}`">
           <v-expansion-panel-header>
             <div class="justify-start">
-              <v-icon class="mx-4" large>{{ section.icon }}</v-icon>
-              <strong>{{ section.name }}</strong>
               <v-tooltip v-if="section.tooltipInfo" bottom>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-icon v-bind="attrs" v-on="on" class="px-2">mdi-help-circle-outline</v-icon>
+                  <v-icon v-bind="attrs" v-on="on" class="mx-4" large>{{ section.icon }}</v-icon>
                 </template>
                 <span>{{ section.tooltipInfo }}</span>
               </v-tooltip>
+              <strong>{{ section.name }}</strong>
 
               <v-chip class="ma-2" :color="section.color">
                 {{
-                get(deadCodeReport, `report.stats.${section.statsKey}`)
+                get(deadCodeReportData, `stats.${section.statsKey}`)
                 }}
               </v-chip>
             </div>
@@ -58,7 +34,7 @@
               <component
                 :is="section.component"
                 :title="section.name"
-                :reportRecords="deadCodeReport.report[section.key]"
+                :reportRecords="deadCodeReportData[section.key]"
               />
             </div>
             <div v-else>Section not implemented</div>
@@ -71,9 +47,10 @@
 </template>
 
 <script>
-import { get, startCase, size } from "lodash";
-import { mapGetters, mapMutations, mapActions } from "vuex";
+import { get, startCase, size, isBoolean } from "lodash";
+import { mapGetters } from "vuex";
 
+import HeaderSummary from "@/components/DeadCodeReport/HeaderSummary";
 import ReportForm from "@/components/DeadCodeReport/ReportForm";
 import ReportDataTable from "@/components/DeadCodeReport/ReportDataTable";
 import ReportErrorTable from "@/components/DeadCodeReport/ReportErrorTable";
@@ -86,6 +63,7 @@ export default {
     ReportErrorTable,
     ReportIsolatesTable,
     ReportForm,
+    HeaderSummary,
   },
   data() {
     return {
@@ -125,8 +103,7 @@ export default {
   computed: {
     ...mapGetters("projectReportsStore", [
       "existsDeadCodeReport",
-      "deadCodeReport",
-      "deadCodeReportForm",
+      "deadCodeReportData",
     ]),
 
     skeletonItemsVisible() {
@@ -135,14 +112,8 @@ export default {
   },
   methods: {
     get,
-    ...mapMutations("projectReportsStore", {
-      resetDeadCodeReportData: "RESET_DEAD_CODE_REPORT_DATA",
-    }),
-    ...mapActions("projectReportsStore", ["generateDeadCodeReport"]),
-    async runReport() {
-      this.isLoading = true;
-      await this.generateDeadCodeReport();
-      this.isLoading = false;
+    toggleLoading(isLoading) {
+      this.isLoading = isBoolean(isLoading) ? isLoading : !this.isLoading;
     },
   },
 };

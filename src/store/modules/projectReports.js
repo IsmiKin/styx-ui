@@ -39,6 +39,9 @@ export default {
     deadCodeReport(state) {
       return _.get(state, 'deadCodeReport');
     },
+    deadCodeReportData(state) {
+      return _.get(state, 'deadCodeReport.report');
+    },
     deadCodeReportForm(state) {
       return _.get(state, 'deadCodeReport.form');
     }
