@@ -23,7 +23,7 @@
               <template v-slot:activator="{ on }">
                 <v-icon v-on="on">mdi-help-circle-outline</v-icon>
               </template>
-              {{ input.hint }}
+              {{ input.toolTipInfo }}
             </v-tooltip>
           </template>
         </v-text-field>
@@ -48,21 +48,24 @@ export default {
           key: "projectPath",
           label: "Project Path",
           icon: "mdi-folder",
-          hint:
+          hint: "/home/username/projects/project_name/src",
+          toolTipInfo:
             "Project where the scanner would run the report. It would search files matching criteria and resolve imports.",
         },
         {
           key: "packageJson",
           label: "Package json",
           icon: "mdi-package-variant-closed",
-          hint:
+          hint: "/home/username/projects/project_name/package.json",
+          toolTipInfo:
             "Project package.json path. It would be use to ignore vendor packages on the imports statements.",
         },
         {
           key: "projectOptions",
           label: "Project Options",
           icon: "mdi-format-list-checks",
-          hint:
+          hint: "/home/username/projects/project_name/project-options.json",
+          toolTipInfo:
             "Project options path. Specific options for the scanner (formats, ignores...) MORE INFO COMING.",
         },
       ],
