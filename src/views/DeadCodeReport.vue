@@ -34,6 +34,7 @@ import { mapGetters } from "vuex";
 import HeaderSummary from "@/components/DeadCodeReport/HeaderSummary";
 import ReportForm from "@/components/DeadCodeReport/ReportForm";
 import FilesReportTab from "@/components/DeadCodeReport/FilesReportTab";
+import GraphReportTab from "@/components/DeadCodeReport/GraphReportTab";
 
 export default {
   name: "DeadCodeReport",
@@ -41,6 +42,7 @@ export default {
     ReportForm,
     HeaderSummary,
     FilesReportTab,
+    GraphReportTab,
   },
   data() {
     return {
@@ -54,7 +56,7 @@ export default {
         {
           label: "Graph",
           icon: "mdi-hubspot",
-          content: "ComponentB",
+          content: GraphReportTab,
         },
       ],
       isLoading: false,

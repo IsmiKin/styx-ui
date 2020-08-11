@@ -42,6 +42,9 @@ export default {
     deadCodeReportData(state) {
       return _.get(state, 'deadCodeReport.report');
     },
+    graphReportData(state) {
+      return _.get(state, 'deadCodeReport.report.graphReportData');
+    },
     deadCodeReportForm(state) {
       return _.get(state, 'deadCodeReport.form');
     }
